@@ -4,7 +4,7 @@ import urllib2
 import urllib
 import logging
 
-def incoming_webhook(text, channel=None, username=None, icon_emoji=None):
+def post(text, channel=None, username=None, icon_emoji=None):
   payload = {
     'text': text,
     'channel': channel,

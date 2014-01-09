@@ -1,11 +1,18 @@
 from google.appengine.ext import db
 
+CONFIG = None
+
 class Config(db.Model):
   incoming_webhook_token = db.StringProperty()
   team_domain = db.StringProperty()
 
 def get_config():
-  return Config.get_by_key_name('singleton')
+  global CONFIG
+  if not CONFIG:
+    CONFIG = Config.get_by_key_name('singleton')
+  else:
+    CONFIG
+  return CONFIG
 
 def set_config(incoming_webhook_token, team_domain):
   Config(
