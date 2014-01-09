@@ -20,8 +20,6 @@ class LogoutPage(webapp2.RequestHandler):
 class CommandPage(webapp2.RequestHandler):
   def post(self):
     logging.info(self.request)
-    logging.info(self.request.get('text'))
-    logging.info(self.request.get('command'))
     commands.run(self.request)
 
 application = webapp2.WSGIApplication([
