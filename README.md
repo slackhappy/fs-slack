@@ -5,6 +5,7 @@ silly slash command synthesis for slack
 
 ## Supported commands ##
 - `/++ thing [reason]`
+- `/-- thing [reason]`
 
 ## Installation ##
 1. Deploy to appspot

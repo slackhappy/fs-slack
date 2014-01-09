@@ -31,13 +31,14 @@ def extract_entity(text):
   tokens = filter(None, re.split(r'\s+', text.lstrip(), maxsplit=1, flags=re.UNICODE))
   return tokens
 
-def plusplus(command):
-  info = extract_entity(command.text)
-  logging.info(info)
-  if info:
-    r = entity.inc_entity(info[0])
 
-    line = u'{to}++ (now at {score}){reason}'.format(
+
+def score(command, delta, message, icon_emoji):
+  info = extract_entity(command.text)
+  if info:
+    r = entity.inc_entity(info[0], delta)
+
+    line = message.format(
       to=info[0] + u'\u200E',
       score=r.score,
       reason='' if len(info) < 2 else ' ' + info[1]
@@ -49,6 +50,16 @@ def plusplus(command):
       line,
       username=command.user_name,
       channel='#' + command.channel_name,
-      icon_emoji=':thumbsup:')
+      icon_emoji=icon_emoji)
 
-register('/++', plusplus)
+
+def plusplus(command):
+  score(command, 1, u'{to}++ (now at {score}){reason}', ':thumbsup:')
+
+def minusminus(command):
+  score(command, -1, u'{to}-- (now at {score}){reason}', ':thumbsdown:')
+
+register(u'/++', plusplus)
+register(u'/--', minusminus)
+# em-dash
+register(u'/\u2014', minusminus)
