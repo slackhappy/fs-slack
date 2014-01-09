@@ -37,8 +37,7 @@ def plusplus(command):
   if info:
     r = entity.inc_entity(info[0])
 
-    line = u'{by}: {to}++ (now at {score}){reason}'.format(
-      by=command.user_name + u'\u200E',
+    line = u'{to}++ (now at {score}){reason}'.format(
       to=info[0] + u'\u200E',
       score=r.score,
       reason='' if len(info) < 2 else ' ' + info[1]
@@ -48,6 +47,7 @@ def plusplus(command):
 
     incoming_webhook.post(
       line,
+      username=command.user_name,
       channel='#' + command.channel_name,
       icon_emoji=':thumbsup:')
 
