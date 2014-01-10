@@ -1,9 +1,13 @@
 import config
 import context
 import webapp2
+import logging
 from google.appengine.api import users
 
+CONFIG_KEYS = ['team_domain', 'incoming_webhook_token', 'api_token']
+
 class ConfigPage(webapp2.RequestHandler):
+
   def ensure_admin(self):
     user = users.get_current_user()
     if user:
@@ -21,23 +25,22 @@ class ConfigPage(webapp2.RequestHandler):
 
   def post(self):
     if self.ensure_admin():
-      incoming_webhook_token = self.request.get('incoming_webhook_token')
-      team_domain = self.request.get('team_domain')
-      config.set_config(incoming_webhook_token, team_domain)
+      settings = {}
+      for key in CONFIG_KEYS:
+        settings[key] = self.request.get(key)
+        if not settings[key]:
+          settings[key] = ''
+      logging.info(settings)
+      config.set_config(**settings)
       self.render()
 
   def render(self):
-    if config.has_config():
-      conf = config.get_config()
-      incoming_webhook_token = conf.incoming_webhook_token
-      team_domain = conf.team_domain
-    else:
-      incoming_webhook_token = ''
-      team_domain = ''
-
-    template_values = {
-      'incoming_webhook_token': incoming_webhook_token,
-      'team_domain': team_domain,
-    }
+    conf = config.get_config()
+    settings = {}
+    for key in CONFIG_KEYS:
+      if hasattr(conf, key):
+        settings[key] = getattr(conf, key)
+      else:
+        settings[key] = ''
     template = context.jinja_environment.get_template('config.html')
-    self.response.out.write(template.render(template_values))
+    self.response.out.write(template.render(settings))

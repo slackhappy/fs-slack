@@ -1,7 +1,9 @@
+import api
 import entity
 import incoming_webhook
 import logging
 import re
+
 
 REGISTRY = {}
 
@@ -59,7 +61,24 @@ def plusplus(command):
 def minusminus(command):
   score(command, -1, u'{to}-- (now at {score}){reason}', ':thumbsdown:')
 
+def paste(command):
+  info = extract_entity(command.text)
+  filetype = 'text'
+  content = command.text
+
+  if len(info) > 1 and info[0] in ['scala', 'python']:
+    filetype = info[0]
+    content = info[1]
+
+  api.files_upload(
+    content=content,
+    filetype=filetype,
+    title=command.user_name + ' pasted some text',
+    channels=[command.channel_id])
+
 register(u'/++', plusplus)
 register(u'/--', minusminus)
 # em-dash
 register(u'/\u2014', minusminus)
+
+register(u'/p', paste)
