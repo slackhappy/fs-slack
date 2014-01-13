@@ -61,6 +61,13 @@ def plusplus(command):
 def minusminus(command):
   score(command, -1, u'{to}-- (now at {score}){reason}', ':thumbsdown:')
 
+def do_paste(command, content, filetype='text'):
+  api.files_upload(
+    content=content,
+    filetype=filetype,
+    title=command.user_name + ' pasted some text',
+    channels=[command.channel_id])
+
 def paste(command):
   info = extract_entity(command.text)
   filetype = 'text'
@@ -69,12 +76,10 @@ def paste(command):
   if len(info) > 1 and info[0] in ['scala', 'python']:
     filetype = info[0]
     content = info[1]
+  do_paste(command, content, filetype)
 
-  api.files_upload(
-    content=content,
-    filetype=filetype,
-    title=command.user_name + ' pasted some text',
-    channels=[command.channel_id])
+def pscala(command):
+  do_paste(command, command.text, 'scala')
 
 register(u'/++', plusplus)
 register(u'/--', minusminus)
@@ -82,3 +87,4 @@ register(u'/--', minusminus)
 register(u'/\u2014', minusminus)
 
 register(u'/p', paste)
+register(u'/pscala', pscala)
