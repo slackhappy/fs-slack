@@ -8,6 +8,7 @@ silly slash command synthesis for slack
 - `/-- thing [reason]`  decrement thing's score
 - `/p [scala|python] some text` paste some monospaced text, with optional language
 - `/pscala some text` paste some text as scala, explicitly
+- `/h` show the command help
 
 ## Installation ##
 1. Deploy to appspot

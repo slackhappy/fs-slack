@@ -7,15 +7,15 @@ import re
 
 REGISTRY = {}
 
-def register(name, fn):
+def register(name, fn, help_text=None):
   global REGISTRY
-  REGISTRY[name] = fn
+  REGISTRY[name] = (fn, help_text)
 
 def run(req):
   command = Command(req)
-  fn = REGISTRY.get(command.command, None)
+  fn, help_text = REGISTRY.get(command.command, (None, None))
   if (fn):
-    fn(command)
+    return fn(command)
 
 class Command(object):
   def __init__(self, req):
@@ -81,10 +81,22 @@ def paste(command):
 def pscala(command):
   do_paste(command, command.text, 'scala')
 
-register(u'/++', plusplus)
-register(u'/--', minusminus)
-# em-dash
-register(u'/\u2014', minusminus)
+def h(command):
+  logging.info('hi')
+  response = u'fs-slack commands:\n'
+  for key in sorted(REGISTRY.keys()):
+    fn, help_text = REGISTRY[key]
+    response += u'{0} {1}\n'.format(key, '' if not help_text else help_text)
+  response += '\nrun /help commands for official slack commands\n'
+  return response
 
-register(u'/p', paste)
-register(u'/pscala', pscala)
+
+
+register(u'/++', plusplus, 'thing [reason]\t\t\t\t\t\tincrement score of thing [for reason]')
+register(u'/--', minusminus, 'thing [reason]\t\t\t\t\t\tdecrement score of thing [for reason]')
+# em-dash
+register(u'/\u2014', minusminus, 'thing [reason]\t\t\t\t\t\tdecrement score of thing [for reason]')
+
+register(u'/p', paste, '[scala|python] some text\t\tpaste some text [optionally set language]')
+register(u'/pscala', pscala, 'some text\t\t\t\t\tpaste some text in scala')
+register(u'/h', h, '\t\t\t\t\t\t\t\t\t\t\tthis help message')

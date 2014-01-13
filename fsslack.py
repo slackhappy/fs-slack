@@ -20,7 +20,11 @@ class LogoutPage(webapp2.RequestHandler):
 class CommandPage(webapp2.RequestHandler):
   def post(self):
     logging.info(self.request)
-    commands.run(self.request)
+    response = commands.run(self.request)
+    if response:
+      self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+      self.response.write(response.encode('utf-8'))
+
 
 application = webapp2.WSGIApplication([
   ('/', MainPage),

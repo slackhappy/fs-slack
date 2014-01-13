@@ -36,6 +36,8 @@ class Attachment(object):
 
 
 def post(text, channel=None, username=None, icon_emoji=None, attachments=None):
+  if attachments is None:
+    attachments = []
   payload = {
     'text': text,
     'channel': channel,
