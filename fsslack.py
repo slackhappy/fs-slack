@@ -5,8 +5,9 @@ from google.appengine.api import users
 from config_page import ConfigPage
 import commands
 import context
-import entity
+import slack
 
+SLACK = slack.Slack()
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
@@ -20,7 +21,7 @@ class LogoutPage(webapp2.RequestHandler):
 class CommandPage(webapp2.RequestHandler):
   def post(self):
     logging.info(self.request)
-    response = commands.run(self.request)
+    response = commands.run(SLACK, self.request)
     if response:
       self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
       self.response.write(response.encode('utf-8'))
