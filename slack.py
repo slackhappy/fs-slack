@@ -48,6 +48,7 @@ class BaseSlack:
       'username': username,
       'icon_emoji': icon_emoji,
       'attachments': map(lambda attachment: attachment.render(), attachments),
+      'link_names': 1
     }
 
     for key in payload.keys():
