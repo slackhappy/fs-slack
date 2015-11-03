@@ -84,7 +84,7 @@ def score(slack_impl, command, delta, message, icon_emoji):
     slack_impl.post(
         line,
         username=command.user_name,
-        channel='#' + command.channel_name,
+        channel=command.channel_id,
         icon_emoji=icon_emoji)
 
 
@@ -93,26 +93,6 @@ def plusplus(slack_impl, command):
 
 def minusminus(slack_impl, command):
   score(slack_impl, command, -1, u'{to}-- (now at {score})', ':thumbsdown:')
-
-def do_paste(command, content, filetype='text'):
-  api.files_upload(
-      content=content,
-      filetype=filetype,
-      title=command.user_name + ' pasted some text',
-      channels=[command.channel_id])
-
-def paste(slack_impl, command):
-  info = extract_entity(command.text)
-  filetype = 'text'
-  content = command.text
-
-  if len(info) > 1 and info[0] in ['scala', 'python']:
-    filetype = info[0]
-    content = info[1]
-  do_paste(command, content, filetype)
-
-def pscala(slack_impl, command):
-  do_paste(command, command.text, 'scala')
 
 def h(slack_impl, command):
   logging.info('hi')
@@ -130,6 +110,4 @@ register(u'/--', minusminus, 'thing[, thing2] [reason]\t\t\t\t\t\tdecrement scor
 # em-dash
 register(u'/\u2014', minusminus, 'thing[, thing2] [reason]\t\t\t\t\t\tdecrement score of thing[, thing2] [for reason]')
 
-register(u'/p', paste, '[scala|python] some text\t\tpaste some text [optionally set language]')
-register(u'/pscala', pscala, 'some text\t\t\t\t\tpaste some text in scala')
 register(u'/h', h, '\t\t\t\t\t\t\t\t\t\t\tthis help message')
